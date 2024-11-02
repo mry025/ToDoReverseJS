@@ -24,7 +24,7 @@ window.nothing = {
 // 代理插桩
 window.nothing.proxy = function (proxyObject, name) {
   // 句柄
-  let handle = {
+  let handler = {
     get(target, property, receiver) {
       return window.nothing._proxyHandleTemplate('get', target, property, '', receiver, name);
     },
@@ -32,7 +32,7 @@ window.nothing.proxy = function (proxyObject, name) {
       return window.nothing._proxyHandleTemplate('set', target, property, value, receiver, name);
     },
   };
-  return new Proxy(proxyObject, handle);
+  return new Proxy(proxyObject, handler);
 };
 // 普通插桩
 window.nothing.ordinary = function (dict) {
@@ -136,7 +136,7 @@ window.nothing.print = function (value) {
       if (value.length > window.nothing.lengthLimit) {
         return `${value.slice(0, window.nothing.lengthLimit)}...len ${value.length}|tpye ${type}`;
       } else {
-        return value;
+        
       }
     } else if (type == 'array' || type == 'object' || type == 'arraybuffer') {
       return window.nothing.stringify(value);
