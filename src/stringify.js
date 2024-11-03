@@ -118,7 +118,7 @@ function stringifyObject(object)
 function stringify(variable, lengthLimit=50)
 {
     // window、document、navigator...
-    if (variable && variable[Symbol.toStringTag]) return value[Symbol.toStringTag].toLowerCase();
+    if (variable && variable[Symbol.toStringTag]) return variable[Symbol.toStringTag].toLowerCase();
 
     let type = getType(variable);
     switch (type) {

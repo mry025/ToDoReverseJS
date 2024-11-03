@@ -50,9 +50,6 @@ class Log
     }
 }
 
-let log = new Log();
-
 module.exports = {
-    log,
     Log,
 };
