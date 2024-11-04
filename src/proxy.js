@@ -1,5 +1,5 @@
 /**
- * 简单代理
+ * 代理
  * @param {object} proxyObject 
  * @param {string} name 
  * @param {Function | *} callBackFunc 
@@ -212,13 +212,17 @@ function _proxyHandleTemplate(name, mode, target, property, args, callBackFunc)
     return result;
 }
 
+module.exports = {
+    proxy,
+};
+
 // ------------------------- 测试 -------------------------
 
 let a = [111, 222, 333, 444]
 let n = a.length
 a = proxy(a, "a", (...args) => { console.log(...args); })
 
-for (let i = 0; i < n; ++i) console.log(a[i])
+// for (let i = 0; i < n; ++i) console.log(a[i])
 
 // for (let i of a)
 // {}
@@ -232,13 +236,20 @@ a = proxy(a, "a", (...args) => { console.log(...args); })
 
 // Object.values(a)
 
-Object.defineProperty(a, 'property1', {
-    value: 42,
-    writable: false,
-});
+// Object.defineProperty(a, 'property1', {
+//     value: 42,
+//     writable: false,
+// });
 
-Object.getPrototypeOf(a)
+// Object.getPrototypeOf(a)
+// "aaa" in a
 
-console.log("aaa" in a)
+function aa()
+{
 
-console.log(a)
+}
+aa = proxy(aa, "aa", (...args) => { console.log(...args); })
+aa[Symbol.toStringTag]
+
+
+

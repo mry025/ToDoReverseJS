@@ -12,6 +12,26 @@ function getType(target)
     return typeof target;
 }
 
+/**
+ * 判断对象循环引用
+ * @param {object} object 
+ * @param {WeakSet} seen 
+ * @returns {boolean}
+ */
+function isCycle(object, seen = new WeakSet()) {
+    if (object && typeof object === 'object') 
+    {
+        if (seen.has(object)) return true;
+        seen.add(object);
+        for (let key of Object.keys(object)) 
+        {
+            if (isCycle(object[key], seen)) return true;
+        }
+    }
+
+    return false;
+}
+
 module.exports = {
     getType,
 };

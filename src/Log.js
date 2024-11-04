@@ -1,18 +1,29 @@
 class Log
 {
-    histry;
-
+    open;
+    
     constructor(open=true)
     {
-        if (open) this.histry = "";
+        this.open = open
     }
 
-    #record(content)
+    /**
+     * 控制打印
+     * @param {string} content 
+     * @param {string} mode 
+     * @returns 
+     */
+    #print(content, mode)
     {
-        if (this.histry != undefined)
-        {
-            this.histry += content;
-            this.histry += '\n';
+        if (this.open == false) return;
+
+        switch (mode) {
+            case "error":
+                console.error(content)
+                break;
+            default:
+                console.log(content);
+                break;
         }
     }
 
@@ -22,8 +33,7 @@ class Log
     debug(message)
     {
         let content = `[debug] ${message}`;
-        this.#record(content);
-        console.log(content);
+        this.#print(content, "debug");
     }
 
     /**
@@ -32,8 +42,7 @@ class Log
     error(message)
     {
         let content = `[error] ${message}`;
-        this.#record(content);
-        console.error(content);
+        this.#print(content, error);
     }
     
     
@@ -45,8 +54,7 @@ class Log
     log(label="debug", message="")
     {
         let content = `[${label}] ${message}`;
-        this.#record(content);
-        console.log(content);
+        this.#print(content, "log");
     }
 }
 

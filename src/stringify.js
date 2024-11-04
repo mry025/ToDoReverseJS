@@ -54,7 +54,7 @@ function shortedNumberArray(array, lengthLimit)
  * @param {Array} array 
  * @param {number} lengthLimit 
  */
-function stringifyArray(array, lengthLimit)
+function stringifyArray(array, lengthLimit, seen)
 {
     if (isNumberArray(array))
     {
@@ -67,7 +67,7 @@ function stringifyArray(array, lengthLimit)
         let res = "[";
         for (let i of array)
         {
-            let temp = stringify(i, lengthLimit);
+            let temp = stringify(i, lengthLimit, seen);
             if (temp != "undefined") res += temp;
             res += ","
         }
@@ -92,17 +92,20 @@ function stringifyArrayBuffer(arraybuffer, lengthLimit)
 /**
  * 将对象字符串化，并做一些打印优化
  * @param {object} object 
+ * @param {WeakSet} seen 存储递归中已遍历的对象
  */
-function stringifyObject(object)
+function stringifyObject(object, lengthLimit, seen)
 {
-    let res = "{";
+    if (seen.has(object)) return "|seen|";
+    seen.add(object);
 
+    let res = "{";
     let keys = Object.keys(object);
     for (let key of keys)
     {
         res += key;
         res += ":";
-        res += stringify(object[key]);
+        res += stringify(object[key], lengthLimit, seen);
         res += ",";
     }
     res = res.slice(0, -1) + '}';
@@ -111,25 +114,45 @@ function stringifyObject(object)
 }
 
 /**
+ * 检查是否是浏览器对象 window、document、navigator...
+ * @param {object} variable 
+ * @returns {undefined | string}
+ */
+function isBrowserObject(variable)
+{
+    let ret;
+    if (variable && variable[Symbol.toStringTag])
+    {
+        if (typeof variable != "symbol") 
+        {
+            ret = variable[Symbol.toStringTag].toLowerCase();
+        }
+    }
+
+    return ret
+}
+
+/**
  * 字符串化
  * @param {object} variable 
- * @param {number} [lengthLimit] 单个成员长度限制
+ * @param {number} lengthLimit 单个成员长度限制
+ * @param {WeakSet} seen 用来解决对象循环引用，使用时不用理会
  */
-function stringify(variable, lengthLimit=50)
+function stringify(variable, lengthLimit=50, seen = new WeakSet())
 {
-    // window、document、navigator...
-    if (variable && variable[Symbol.toStringTag]) return variable[Symbol.toStringTag].toLowerCase();
+    let check = isBrowserObject(variable);
+    if (check) return check;
 
     let type = getType(variable);
     switch (type) {
         case "string":
             return stringifyString(variable, lengthLimit);
         case "array":
-            return stringifyArray(variable, lengthLimit);
+            return stringifyArray(variable, lengthLimit, seen);
         case "arraybuffer":
             return stringifyArrayBuffer(variable, lengthLimit);
         case "object":
-            return stringifyObject(variable);
+            return stringifyObject(variable, lengthLimit, seen);
         case "symbol":
             return variable.toString();
         case "function":
@@ -144,7 +167,10 @@ module.exports = {
 };
 
 // ------------------------- 测试 -------------------------
+const symbol2 = Symbol("stringify");
+
 let a = ["a", 123564, 5465]
+a[symbol2] = 1
 let b = [11,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]
 let c = {
     "aaa": a,
@@ -153,10 +179,22 @@ let c = {
     "13354": [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,54654,,,,,,,,,,],
     45456:"sadddddddddddddddddddddddddddddddddddddddddddddddddda"
 }
+
 let array = [1, "asdasdadsadddddddddddddddddddddddddddddddddddddddddddddddddda", a, b, c]
 let object = {
     array,
     "asd":45,
 }
-console.log(stringify(object))
+// console.log(stringify(object))
+// console.log(array[symbol2]);
 
+let objA = {};
+let objB = { a: objA };
+objA.b = objB;
+
+let objC = {};
+objC.c = objC;
+
+c.c = c
+
+console.log(stringify(c))
