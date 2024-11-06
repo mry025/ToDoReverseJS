@@ -32,6 +32,4 @@ class Hook
     }
 }
 
-module.exports = {
-    Hook,
-};
+export { Hook };

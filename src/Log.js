@@ -58,6 +58,4 @@ class Log
     }
 }
 
-module.exports = {
-    Log,
-};
+export { Log };

@@ -1,4 +1,4 @@
-const { getType } = require("./utiles")
+import { getType } from "./utiles.js"
 
 /**
  * 字符串打印优化
@@ -162,39 +162,4 @@ function stringify(variable, lengthLimit=50, seen = new WeakSet())
     }
 }
 
-module.exports = {
-    stringify,
-};
-
-// ------------------------- 测试 -------------------------
-const symbol2 = Symbol("stringify");
-
-let a = ["a", 123564, 5465]
-a[symbol2] = 1
-let b = [11,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]
-let c = {
-    "aaa": a,
-    "fafaf": 645456,
-    "sgsg": b,
-    "13354": [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,54654,,,,,,,,,,],
-    45456:"sadddddddddddddddddddddddddddddddddddddddddddddddddda"
-}
-
-let array = [1, "asdasdadsadddddddddddddddddddddddddddddddddddddddddddddddddda", a, b, c]
-let object = {
-    array,
-    "asd":45,
-}
-// console.log(stringify(object))
-// console.log(array[symbol2]);
-
-let objA = {};
-let objB = { a: objA };
-objA.b = objB;
-
-let objC = {};
-objC.c = objC;
-
-c.c = c
-
-console.log(stringify(c))
+export { stringify };

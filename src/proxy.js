@@ -1,8 +1,14 @@
 /**
- * 代理
- * @param {object} proxyObject 
- * @param {string} name 
- * @param {Function | *} callBackFunc 
+ * 创建一个代理对象，用于拦截并处理对象的属性访问。
+ * @param {object} proxyObject 要被代理的目标对象。
+ * @param {string} name 日志中的命名。
+ * @param {Function | *} callBackFunc 被调用时的回调函数，该函数接收以下参数：
+ *   - {string} name - 日志中的命名。
+ *   - {string} mode - 代理的操作模式，例如 'get' 或 'set'。
+ *   - {object} target - 代理的目标对象。
+ *   - {string?} property - 被访问的属性。
+ *   - {*} value - 用到的值。
+ * @returns {Proxy} 返回创建的代理对象。
  */
 function proxy(proxyObject, name, callBackFunc)
 {
@@ -212,44 +218,4 @@ function _proxyHandleTemplate(name, mode, target, property, args, callBackFunc)
     return result;
 }
 
-module.exports = {
-    proxy,
-};
-
-// ------------------------- 测试 -------------------------
-
-let a = [111, 222, 333, 444]
-let n = a.length
-a = proxy(a, "a", (...args) => { console.log(...args); })
-
-// for (let i = 0; i < n; ++i) console.log(a[i])
-
-// for (let i of a)
-// {}
-
-a = {
-    "aaa": 1,
-    "bbb": 2,
-    "asdasd": ["asdasd", 222],
-}
-a = proxy(a, "a", (...args) => { console.log(...args); })
-
-// Object.values(a)
-
-// Object.defineProperty(a, 'property1', {
-//     value: 42,
-//     writable: false,
-// });
-
-// Object.getPrototypeOf(a)
-// "aaa" in a
-
-function aa()
-{
-
-}
-aa = proxy(aa, "aa", (...args) => { console.log(...args); })
-aa[Symbol.toStringTag]
-
-
-
+export { proxy };

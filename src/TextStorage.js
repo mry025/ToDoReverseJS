@@ -63,3 +63,5 @@ class TextStorage
         clear();    // 下载完就清理
     }
 }
+
+export { TextStorage };

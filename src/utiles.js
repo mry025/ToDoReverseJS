@@ -32,7 +32,4 @@ function isCycle(object, seen = new WeakSet()) {
     return false;
 }
 
-module.exports = {
-    getType,
-};
-
+export { getType, isCycle };
