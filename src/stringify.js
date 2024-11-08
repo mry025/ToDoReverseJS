@@ -38,6 +38,8 @@ function isNumberArray(array)
  */
 function shortedNumberArray(array, lengthLimit)
 {
+    array = Array.from(array);  // 针对字节数组
+
     if (array.length <= lengthLimit) return array.join(',');
     else
     {
@@ -45,6 +47,7 @@ function shortedNumberArray(array, lengthLimit)
         const start = array.slice(0, halfLimit);
         const end = array.slice(-halfLimit);
         const middle = '···';
+
         return start.concat(middle, end).join(',');
     }
 }
@@ -123,7 +126,7 @@ function isBrowserObject(variable)
     let ret;
     if (variable && variable[Symbol.toStringTag])
     {
-        if (typeof variable != "symbol") 
+        if (typeof variable != "symbol" && getType(variable) != 'arraybuffer') 
         {
             ret = variable[Symbol.toStringTag].toLowerCase();
         }

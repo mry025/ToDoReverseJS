@@ -7,6 +7,7 @@ import path from "path";
 // 全局变量
 const sourceDir = "src";
 const entryDir = "yourProgram.js";
+
 let outPath = "index.js";
 let outName = "StackTrace";
 let outObject = "StackTrace";
