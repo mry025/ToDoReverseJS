@@ -1,3 +1,5 @@
+// 一个案例
+
 import { Log } from "./Log.js";
 import { TextStorage } from "./TextStorage.js";
 import { getType } from "./utiles.js";
