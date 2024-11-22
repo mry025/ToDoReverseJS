@@ -1,55 +1,116 @@
-import { parse } from "@babel/parser";
-import traverse from '@babel/traverse';
-import generator from '@babel/generator';
-import fs from "fs"
-import path from "path";
+const fs = require("fs");
+const path = require("path");
+const parser = require("@babel/parser");
+const traverse = require("@babel/traverse").default;
+const babel = require("@babel/core");
 
-// 全局变量
-const sourceDir = "src";
-const entryDir = "yourProgram.js";
 
-let outPath = "index.js";
-let outName = "StackTrace";
-let outObject = "StackTrace";
-let code = `let ${outName} = (function(){\r\n`;
-
-function codeCollector(fileName)
+/**
+ * 分析单独模块
+ * @param {string} file 
+ */
+function getModuleInfo(file)
 {
-    const filePath = path.join(sourceDir, fileName)
-    const data = fs.readFileSync(filePath, "utf-8");
-    let neadFile = new Set();
+    const body = fs.readFileSync(file, "utf-8");
     
-    const ast = parse(data, { sourceType: "module" });
-    
-    traverse.default(ast, {
-        ImportDeclaration(path) 
-        {
-            let node = path.node;
-            let filePath = node["source"]["value"];
-            neadFile.add(filePath.split("/")[1]);
-            path.remove();
-        },
-        ExportNamedDeclaration(path)
-        {
-            path.remove();
-        }
+    const ast = parser.parse(body, {
+        sourceType: "module"
     });
-    let generatorCode = generator.default(ast).code;
+    
+    // 收集依赖项
+    const deps = {}
+    traverse(ast, {
+        ImportDeclaration({ node })
+        {   
+            const dirname = path.dirname(file);
+            const abspath = path.join('.', dirname, node.source.value);
 
-    for (let file of neadFile) {
-        codeCollector(file)
-    }
+            deps[node.source.value] = abspath;
+        }
+    })
 
-    code += generatorCode;
-    code += "\r\n\r\n";
+    // ES6 => ES5
+    const { code } = babel.transformFromAst(ast, null, {
+        presets: ["@babel/preset-env"]
+    });
+
+    const moduleInfo = {file, deps, code };
+    return moduleInfo;
 }
 
+/**
+ * 递归获取依赖信息
+ * @param {*} storage 
+ * @param {*} info 
+ */
+function getDeps(storage, { deps })
+{
+    Object.keys(deps).forEach(key => {
+        const child = getModuleInfo(deps[key]);
+        storage.push(child);
+        getDeps(storage, child);
+    });
+}
 
-codeCollector(entryDir);
-code += `   return ${outObject} }());\r\n`
+/**
+ * 分析全部依赖模块
+ * @param {string} file 
+ */
+function parseModules(file)
+{
+    const entry = getModuleInfo(file);
+    const temp = [entry];
 
-fs.writeFile(outPath, code, (err) => {
-    if (err) throw err;
-    console.log('写入成功');
-});
+    const depsGraph = {};
 
+    getDeps(temp, entry);
+
+    temp.forEach(info => {
+        depsGraph[info.file] = {
+            deps: info.deps,
+            code: info.code
+        }
+    });
+
+    return depsGraph;
+}
+
+/**
+ * 生成单个js
+ * @param {string} file 
+ * @returns 
+ */
+function bundle(file)
+{
+    const depsGraph = JSON.stringify(parseModules(file), null, 2);
+    return `
+!(function (graph) 
+{
+    function require(file)
+    {
+        function absRequire(relPath)
+        {
+            return require(graph[file].deps[relPath]);
+        }
+        var exports = {};
+        (function (require, exports, code)
+        {
+            eval(code);
+        })(absRequire, exports, graph[file].code);
+        return exports
+    }
+    require('${file}')
+})(${depsGraph});
+    `
+}
+
+let entry = "./src/yourProgram.js";
+
+let dist = "dist";
+let result = "result.js"
+
+
+const content = bundle(entry);
+!fs.existsSync(dist) && fs.mkdirSync(dist);
+fs.writeFileSync(path.join(dist, result), content);
+console.log(content);

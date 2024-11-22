@@ -67,4 +67,4 @@ class StackTrace
     }
 }
 
-export { StackTrace };
+window.nothing = { StackTrace };

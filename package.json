@@ -1,10 +1,11 @@
 {
     "name": "ToDoReverseJS",
     "version": "0.1",
-    "type": "module",
+    "type": "commonjs",
     "dependencies": {
         "@babel/core": "^7.26.0",
         "@babel/parser": "^7.26.2",
+        "@babel/preset-env": "^7.26.0",
         "@babel/traverse": "^7.25.9"
     }
 }
