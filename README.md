@@ -9,5 +9,5 @@ window.nothing = { StackTrace };    // 假设要导出StackTrace
 ```
 
 ## pack.js 
-一个简易的webpack，可以将多个相互依赖js打包成一个js文件，为了让脚本对外只暴露一个变量和方便注入到浏览器。
+一个简易的webpack，可以将多个相互依赖js打包成一个js文件，为了让脚本对外只暴露一个变量和方便注入到浏览器，生成的代码在dist/result.js中，可以配置。
 
