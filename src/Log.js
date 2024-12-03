@@ -17,6 +17,17 @@ class Log
     {
         if (this.open == false) return;
 
+        // 更清晰
+        if (content.includes('\n'))
+        {
+            let i = 0;
+            for (; i < content.length; ++i)
+            {
+                if (content[i] == ']') break;
+            }
+            content = content.substring(0, i + 1) + '\n' + content.substring(i + 2);
+        }
+
         switch (mode) {
             case "error":
                 console.error(content)
@@ -51,11 +62,13 @@ class Log
      * @param {string} label 
      * @param {*} message 
      */
-    log(label="debug", message="")
+    label(label="label", message="")
     {
         let content = `[${label}] ${message}`;
         this.#print(content, "log");
     }
 }
 
-export { Log };
+module.exports = {
+    Log
+}
