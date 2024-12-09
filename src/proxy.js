@@ -218,4 +218,4 @@ function _proxyHandleTemplate(name, mode, target, property, args, callBackFunc)
     return result;
 }
 
-export { proxy };
+module.exports ={ proxy };

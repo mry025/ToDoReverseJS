@@ -20,4 +20,4 @@ class Stats
     }
 }
 
-export { Stats };
+module.exports = { Stats };

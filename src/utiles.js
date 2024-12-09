@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 /**
  * 获取目标类型
  * @param {*} target 
@@ -32,4 +34,34 @@ function isCycle(object, seen = new WeakSet()) {
     return false;
 }
 
-export { getType, isCycle };
+/**
+ * 清晰打印
+ * @param {string} label 
+ * @param {string} message 
+ */
+function debug(label="", message="")
+{
+    if (label != "" && message == "")
+    {
+        console.log(label);
+    }
+    else
+    {
+        console.log(`[${label}] ${message}`);
+    }
+}
+
+// 随机生成名字
+function randomName(prefix="random")
+{
+    const randomBytes = crypto.randomBytes(8);
+    const randomHex = randomBytes.toString('hex');
+    return `${prefix}_${randomHex}`;
+}
+
+module.exports = {
+    getType,
+    isCycle, 
+    debug, 
+    randomName 
+};

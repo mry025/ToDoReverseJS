@@ -1,10 +1,9 @@
 // 一个案例
-
-import { Log } from "./Log.js";
-import { TextStorage } from "./TextStorage.js";
-import { getType } from "./utiles.js";
-import { stringify } from "./stringify.js";
-import { proxy } from "./proxy.js";
+const { Log } = require("./Log.js");
+const { TextStorage } = require("./TextStorage.js");
+const { getType } = require("./utiles.js");
+const { stringify } = require("./stringify.js");
+const { proxy } = require("./proxy.js");
 
 class StackTrace
 {

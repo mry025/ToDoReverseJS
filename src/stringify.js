@@ -1,4 +1,4 @@
-import { getType } from "./utiles.js"
+const { getType } = require("./utiles.js");
 
 /**
  * 字符串打印优化
@@ -165,4 +165,4 @@ function stringify(variable, lengthLimit=50, seen = new WeakSet())
     }
 }
 
-export { stringify };
+module.exports = { stringify };

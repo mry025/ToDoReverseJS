@@ -1,5 +1,4 @@
-import wabt from "wabt";
-
+const wabt = require("wabt")
 
 wabt().then(wabt => {
 

@@ -64,4 +64,4 @@ class TextStorage
     }
 }
 
-export { TextStorage };
+module.exports = { TextStorage };
