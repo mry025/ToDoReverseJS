@@ -7,6 +7,10 @@
         "@babel/parser": "^7.26.2",
         "@babel/preset-env": "^7.26.0",
         "@babel/traverse": "^7.25.9",
+        "ts-node": "^10.9.2",
         "wabt": "^1.0.36"
+    },
+    "devDependencies": {
+        "@types/node": "^22.10.2"
     }
 }

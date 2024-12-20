@@ -1,28 +1,21 @@
 class Hook
 {
-    hookArray;
+    hookArray: Array<[Function, Function]>;
 
     constructor()
     {
         this.hookArray = [];
     }
 
-    /**
-     * 添加要 hook 的函数
-     * @param {Function} target 
-     * @param {Function} func 
-     * @returns 
-     */
-    add(target, func)
+    // 添加要 hook 的函数
+    add(target: Function, func: Function)
     {
         if (!(target instanceof Function && func instanceof Function)) return;
 
-        hookArray.push([target, func])
+        this.hookArray.push([target, func])
     }
 
-    /**
-     * 控制是否 hook
-     */
+    // 控制是否 hook
     eval()
     {
         for (let item of this.hookArray)
@@ -32,4 +25,4 @@ class Hook
     }
 }
 
-module.exports = { Hook };
+export { Hook };

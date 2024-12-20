@@ -1,12 +1,7 @@
-const { getType } = require("./utiles.js");
+import { getType } from "./utiles";
 
-/**
- * 字符串打印优化
- * @param {string} str 
- * @param {number} lengthLimit 
- * @returns {string}
- */
-function stringifyString(str, lengthLimit) {
+// 字符串打印优化
+function stringifyString(str: string, lengthLimit: number) {
     if (str.length <= lengthLimit) return str;
 
     const halfLimit = Math.floor(lengthLimit / 2);
@@ -15,12 +10,8 @@ function stringifyString(str, lengthLimit) {
     return `${start}···${end}|length ${str.length}|`;
 }
 
-/**
- * 判断一个数组是否全是数字
- * @param {Array} array 
- * @returns {boolean}
- */
-function isNumberArray(array)
+// 判断一个数组是否全是数字
+function isNumberArray(array: Array<any>)
 {
     for (let i of array)
     {
@@ -30,13 +21,8 @@ function isNumberArray(array)
     return true;
 }
 
-/**
- * 全数字数组打印优化
- * @param {object} array 
- * @param {number} lengthLimit 
- * @returns {string}
- */
-function shortedNumberArray(array, lengthLimit)
+// 全数字数组打印优化
+function shortedNumberArray(array: Array<number>, lengthLimit: number)
 {
     array = Array.from(array);  // 针对字节数组
 
@@ -48,16 +34,12 @@ function shortedNumberArray(array, lengthLimit)
         const end = array.slice(-halfLimit);
         const middle = '···';
 
-        return start.concat(middle, end).join(',');
+        return [...start, middle, ...end].join(',');
     }
 }
 
-/**
- * 将数组字符串化，并做一些打印优化
- * @param {Array} array 
- * @param {number} lengthLimit 
- */
-function stringifyArray(array, lengthLimit, seen)
+// 将数组字符串化，并做一些打印优化
+function stringifyArray(array: Array<any>, lengthLimit: number, seen: WeakSet<object>)
 {
     if (isNumberArray(array))
     {
@@ -79,25 +61,16 @@ function stringifyArray(array, lengthLimit, seen)
     }
 }
 
-/**
- * 将字节数组字符串化，并做一些打印优化
- * @param {object} arraybuffer 
- * @param {number} lengthLimit 
- * @returns 
- */
-function stringifyArrayBuffer(arraybuffer, lengthLimit)
+// 将字节数组字符串化，并做一些打印优化
+function stringifyArrayBuffer(arraybuffer: Array<any>, lengthLimit: number)
 {
     const res = shortedNumberArray(arraybuffer, lengthLimit);
     if (arraybuffer.length <= lengthLimit) return `[${res}]`;
     else return `[${res}]|length ${arraybuffer.length}, tpye arraybuffer|`;
 }   
 
-/**
- * 将对象字符串化，并做一些打印优化
- * @param {object} object 
- * @param {WeakSet} seen 存储递归中已遍历的对象
- */
-function stringifyObject(object, lengthLimit, seen)
+// 将对象字符串化，并做一些打印优化
+function stringifyObject(object: any, lengthLimit: number, seen: WeakSet<object>)
 {
     if (seen.has(object)) return "|seen|";
     seen.add(object);
@@ -116,12 +89,8 @@ function stringifyObject(object, lengthLimit, seen)
     return res;
 }
 
-/**
- * 检查是否是浏览器对象 window、document、navigator...
- * @param {object} variable 
- * @returns {undefined | string}
- */
-function isBrowserObject(variable)
+// 检查是否是浏览器对象 window、document、navigator...
+function isBrowserObject(variable: any)
 {
     let ret;
     if (variable && variable[Symbol.toStringTag])
@@ -135,13 +104,8 @@ function isBrowserObject(variable)
     return ret
 }
 
-/**
- * 字符串化
- * @param {object} variable 
- * @param {number} lengthLimit 单个成员长度限制
- * @param {WeakSet} seen 用来解决对象循环引用，使用时不用理会
- */
-function stringify(variable, lengthLimit=50, seen = new WeakSet())
+// 字符串化
+function stringify(variable: any, lengthLimit=50, seen = new WeakSet())
 {
     let check = isBrowserObject(variable);
     if (check) return check;

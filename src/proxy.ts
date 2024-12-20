@@ -1,20 +1,11 @@
-/**
- * 创建一个代理对象，用于拦截并处理对象的属性访问。
- * @param {object} proxyObject 要被代理的目标对象。
- * @param {string} name 日志中的命名。
- * @param {Function | *} callBackFunc 被调用时的回调函数，该函数接收以下参数：
- *   - {string} name - 日志中的命名。
- *   - {string} mode - 代理的操作模式，例如 'get' 或 'set'。
- *   - {object} target - 代理的目标对象。
- *   - {string?} property - 被访问的属性。
- *   - {*} value - 用到的值。
- * @returns {Proxy} 返回创建的代理对象。
- */
-function proxy(proxyObject, name, callBackFunc)
+type CallBack = (name: string, mode: string, target: object, property: string, value: any) => void;
+
+// 创建一个代理对象，用于拦截并处理对象的属性访问。
+function proxy(proxyObject: object, name: string, callBackFunc: CallBack)
 {
     // 句柄
     let handler = {
-        getPrototypeOf(target) 
+        getPrototypeOf(target: object) 
         {
             /* 捕获 
             Object.getPrototypeOf()
@@ -25,7 +16,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'getPrototypeOf', target, undefined,
                 [target], callBackFunc);
         },
-        setPrototypeOf(target, prototype) 
+        setPrototypeOf(target: object, prototype: object | null) 
         {
             /* 捕获 
             Object.setPrototypeOf()
@@ -33,7 +24,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'setPrototypeOf', target, undefined,
                 [target, prototype], callBackFunc);
         },
-        isExtensible(target) 
+        isExtensible(target: object) 
         {
             /* 捕获 
             Object.isExtensible()
@@ -41,7 +32,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'isExtensible', target, undefined,
                 [target], callBackFunc);
         },
-        preventExtensions(target) 
+        preventExtensions(target: object) 
         {
             /* 捕获 
             Object.preventExtensions()
@@ -49,7 +40,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'preventExtensions', target, undefined,
                 [target], callBackFunc);
         },
-        getOwnPropertyDescriptor(target, property) 
+        getOwnPropertyDescriptor(target: object, property: string) 
         {
             /* 捕获 
             Object.getOwnPropertyDescriptor()
@@ -57,7 +48,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'getOwnPropertyDescriptor', target, property,
                 [target, property], callBackFunc);
         },
-        defineProperty(target, property, descriptor) 
+        defineProperty(target: object, property: string, descriptor: any) 
         {
             /* 捕获 
             Object.defineProperty()
@@ -65,7 +56,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'defineProperty', target, property,
                 [target, property, descriptor], callBackFunc);
         },
-        has(target, property)
+        has(target: object, property: string)
         {
             /* 捕获 
             属性查询：foo in proxy
@@ -75,7 +66,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'has', target, property,
                 [target, property], callBackFunc);
         },
-        get(target, property, receiver) 
+        get(target: object, property: string, receiver: object) 
         {
             /* 捕获 
             访问属性：proxy[foo] 和 proxy.bar
@@ -84,7 +75,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'get', target, property,
                 [target, property, receiver], callBackFunc);
         },
-        set(target, property, value, receiver) 
+        set(target: object, property: string, value: any, receiver: object) 
         {
             /* 捕获 
             指定属性值：proxy[foo] = bar 和 proxy.foo = bar
@@ -93,7 +84,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'set', target, property,
                 [target, property, value, receiver], callBackFunc);
         },
-        deleteProperty(target, property)
+        deleteProperty(target: object, property: string)
         {
             /* 捕获 
             删除属性：delete proxy[foo] 和 delete proxy.foo
@@ -101,7 +92,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'deleteProperty', target, property,
                 [target, property], callBackFunc);
         },
-        ownKeys(target) 
+        ownKeys(target: object) 
         {
             /* 捕获 
             Object.getOwnPropertyNames()
@@ -111,7 +102,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'ownKeys', target, undefined,
                 [target], callBackFunc);
         },
-        apply(target, thisArg, argumentsList) 
+        apply(target: object, thisArg: object, argumentsList: Array<any>) 
         {
             /* 捕获 
             proxy(...args)
@@ -121,7 +112,7 @@ function proxy(proxyObject, name, callBackFunc)
             return _proxyHandleTemplate(name, 'apply', target, undefined,
                 [target, thisArg, argumentsList], callBackFunc);
         },
-        construct(target, argumentsList, newTarget) 
+        construct(target: object, argumentsList: Array<any>, newTarget: object) 
         {
             /* 捕获 
             new proxy(...args)
@@ -144,62 +135,62 @@ function proxy(proxyObject, name, callBackFunc)
  * @param {Function | *} callBackFunc 
  * @returns 
  */
-function _proxyHandleTemplate(name, mode, target, property, args, callBackFunc)
+function _proxyHandleTemplate(name: string, mode: string, target: object, property: string | undefined, args: Array<any>, callBackFunc: CallBack)
 {
     let result;
     let value;
 
     switch (mode) {
         case "getPrototypeOf":
-            result = Reflect.getPrototypeOf(...args);
+            result = Reflect.getPrototypeOf(args[0]);
             value = result;
             break;
         case "setPrototypeOf":
-            result = Reflect.setPrototypeOf(...args);
+            result = Reflect.setPrototypeOf(args[0], args[1]);
             value = args[1];
             break;
         case "isExtensible":
-            result = Reflect.isExtensible(...args);
+            result = Reflect.isExtensible(args[0]);
             value = result;
             break;
         case "preventExtensions":
-            result = Reflect.preventExtensions(...args);
+            result = Reflect.preventExtensions(args[0]);
             value = result;
             break;
         case "getOwnPropertyDescriptor":
-            result = Reflect.getOwnPropertyDescriptor(...args);
+            result = Reflect.getOwnPropertyDescriptor(args[0], args[2]);
             value = result;
             break;
         case "defineProperty":
-            result = Reflect.defineProperty(...args);
+            result = Reflect.defineProperty(args[0], args[1], args[2]);
             value = args[2];
             break;
         case "has":
-            result = Reflect.has(...args);
+            result = Reflect.has(args[0], args[1]);
             value = result;
             break;
         case "get":
-            result = Reflect.get(...args);
+            result = Reflect.get(args[0], args[1]);
             value = result;
             break;
         case "set":
-            result = Reflect.set(...args);
+            result = Reflect.set(args[0], args[1], args[2]);
             value = args[2];
             break;
         case "deleteProperty":
-            result = Reflect.deleteProperty(...args);
+            result = Reflect.deleteProperty(args[0], args[1]);
             value = result;
             break;
         case "ownKeys":
-            result = Reflect.ownKeys(...args);
+            result = Reflect.ownKeys(args[0]);
             value = result;
             break;
         case "apply":
-            result = Reflect.apply(...args);
+            result = Reflect.apply(args[0], args[1], args[2]);
             value = result;
             break;
         case "construct":
-            result = Reflect.construct(...args);
+            result = Reflect.construct(args[0], args[1]);
             value = result;
             break;
     }
@@ -209,7 +200,7 @@ function _proxyHandleTemplate(name, mode, target, property, args, callBackFunc)
     {
         try 
         {
-            callBackFunc(name, mode, target, property, value);
+            callBackFunc(name, mode, target, property!, value);
         } catch (error) {
             throw "传入的回调函数报错\n" + error;
         }

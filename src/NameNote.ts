@@ -1,6 +1,9 @@
 class NameNote
 {
-    constructor(prefix)
+    private prefix: string;
+    private count: number;
+
+    constructor(prefix="var")
     {
         this.prefix = prefix;
         this.count = 0;
@@ -9,10 +12,10 @@ class NameNote
     new()
     {
         this.count++;
-        return this.prefix + "_" + this.count;
+        return this.prefix + "_" +this.count;
     }
 }
 
-module.exports = {
+export {
     NameNote
 }
