@@ -129,4 +129,6 @@ function stringify(variable: any, lengthLimit=50, seen = new WeakSet())
     }
 }
 
-module.exports = { stringify };
+export {
+    stringify
+}

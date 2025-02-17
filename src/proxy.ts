@@ -209,4 +209,6 @@ function _proxyHandleTemplate(name: string, mode: string, target: object, proper
     return result;
 }
 
-module.exports ={ proxy };
+export {
+    proxy
+}

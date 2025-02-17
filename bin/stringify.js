@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.stringify = stringify;
 const utiles_1 = require("./utiles");
 // 字符串打印优化
 function stringifyString(str, lengthLimit) {
@@ -109,4 +110,3 @@ function stringify(variable, lengthLimit = 50, seen = new WeakSet()) {
             return "" + variable;
     }
 }
-module.exports = { stringify };

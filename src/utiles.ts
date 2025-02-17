@@ -1,5 +1,3 @@
-import crypto from 'crypto';
-
 // 获取数据类型
 function getType(target: any): string
 {
@@ -23,26 +21,47 @@ function debug(label="", message=""): void
     }
 }
 
+function generateRandomString(length: number) 
+{
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    let result = "";
+    for (let i = 0; i < length; i++) 
+    {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    return result;
+}
+
 // 随机生成名字
 function randomName(prefix="random"): string
 {
-    const randomBytes = crypto.randomBytes(8);
-    const randomHex = randomBytes.toString('hex');
+    const randomHex = generateRandomString(8);
     return `${prefix}_${randomHex}`;
 }
 
-
-// 判断是否是 node 节点
-function isNode(n: any): boolean
+class NameNote
 {
-    if (getType(n) != 'object' || n['type'] == undefined) return false;
-    else return true;
+    private prefix: string;
+    private count: number;
+
+    constructor(prefix="var")
+    {
+        this.prefix = prefix;
+        this.count = 0;
+    }
+
+    new()
+    {
+        this.count++;
+        return this.prefix + "_" +this.count;
+    }
 }
 
 
 export {
 	getType,
     debug,
-    isNode,
     randomName,
+    NameNote,
 };

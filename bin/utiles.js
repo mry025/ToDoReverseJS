@@ -1,13 +1,9 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NameNote = void 0;
 exports.getType = getType;
 exports.debug = debug;
-exports.isNode = isNode;
 exports.randomName = randomName;
-const crypto_1 = __importDefault(require("crypto"));
 // 获取数据类型
 function getType(target) {
     if (Array.isArray(target))
@@ -27,16 +23,27 @@ function debug(label = "", message = "") {
         console.log(`[${label}] ${message}`);
     }
 }
+function generateRandomString(length) {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+}
 // 随机生成名字
 function randomName(prefix = "random") {
-    const randomBytes = crypto_1.default.randomBytes(8);
-    const randomHex = randomBytes.toString('hex');
+    const randomHex = generateRandomString(8);
     return `${prefix}_${randomHex}`;
 }
-// 判断是否是 node 节点
-function isNode(n) {
-    if (getType(n) != 'object' || n['type'] == undefined)
-        return false;
-    else
-        return true;
+class NameNote {
+    constructor(prefix = "var") {
+        this.prefix = prefix;
+        this.count = 0;
+    }
+    new() {
+        this.count++;
+        return this.prefix + "_" + this.count;
+    }
 }
+exports.NameNote = NameNote;

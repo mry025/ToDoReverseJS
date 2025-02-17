@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.proxy = proxy;
 // 创建一个代理对象，用于拦截并处理对象的属性访问。
 function proxy(proxyObject, name, callBackFunc) {
     // 句柄
@@ -173,4 +175,3 @@ function _proxyHandleTemplate(name, mode, target, property, args, callBackFunc) 
     }
     return result;
 }
-module.exports = { proxy };
