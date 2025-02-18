@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TextStorage = void 0;
 class TextStorage {
-    constructor(strLengthLimit = 1024 * 256) {
-        this.strLengthLimit = strLengthLimit;
+    constructor() {
         this.stringCache = "";
         this.blobCache = new Blob([''], { type: 'text/plain' });
     }
@@ -16,8 +15,6 @@ class TextStorage {
         if (typeof string != "string")
             throw "传入的参数有误！";
         this.stringCache += string;
-        if (this.stringCache.length > this.strLengthLimit)
-            this.blobStored();
         return true;
     }
     /**

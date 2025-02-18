@@ -6,13 +6,13 @@ const TextStorage_1 = require("./TextStorage");
 const stringify_1 = require("./stringify");
 const proxy_1 = require("./proxy");
 class StackTrace {
-    constructor(open = false, details = false, lengthLimit = 50, toBlobLimit = 1024 * 256) {
+    constructor(open = false, details = false, lengthLimit = 20) {
         this.open = open;
         this.details = details;
         this.line = 0;
         this.lengthLimit = lengthLimit;
         this.log = new Log_1.Log();
-        this.textStorage = new TextStorage_1.TextStorage(toBlobLimit);
+        this.textStorage = new TextStorage_1.TextStorage();
     }
     getType(target) {
         if (Array.isArray(target))
@@ -30,6 +30,8 @@ class StackTrace {
         return (0, proxy_1.proxy)(proxyObject, name, (name, mode, target, property, value) => {
             if (!this.open)
                 return;
+            if (mode != "set" && mode != "get")
+                return;
             let content;
             let text;
             if (this.details)
@@ -39,6 +41,10 @@ class StackTrace {
             text = `${name}|${mode}| 下标: ${property.toString()} 内容: ${content}\r\n`;
             this.textStorage.add(text);
             this.line += 1;
+            if (this.line % 100000 == 0) {
+                this.log.debug(this.line + "");
+                this.textStorage.blobStored();
+            }
             // 断点
             if (debug instanceof Function) {
                 debug(this.line, name, mode, property.toString(), content);

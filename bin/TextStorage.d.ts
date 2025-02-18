@@ -1,8 +1,7 @@
 declare class TextStorage {
-    strLengthLimit: number;
     private stringCache;
     private blobCache;
-    constructor(strLengthLimit?: number);
+    constructor();
     /**
      * 添加内容
      * @param {string} string

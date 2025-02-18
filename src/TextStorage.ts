@@ -1,12 +1,10 @@
 class TextStorage
 {   
-    public strLengthLimit: number;
     private stringCache: string;
     private blobCache: Blob;
 
-    constructor(strLengthLimit = 1024 * 256)
+    constructor()
     {
-        this.strLengthLimit = strLengthLimit;
         this.stringCache = "";
         this.blobCache = new Blob([''], { type: 'text/plain' });
     }
@@ -19,9 +17,7 @@ class TextStorage
     add(string="")
     {
         if (typeof string != "string") throw "传入的参数有误！"
-
         this.stringCache += string;
-        if (this.stringCache.length > this.strLengthLimit) this.blobStored()
         return true;
     }
 

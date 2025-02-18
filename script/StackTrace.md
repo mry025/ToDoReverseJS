@@ -1,3 +1,4 @@
+```js
 import { Log } from "./Log"
 import { TextStorage } from "./TextStorage";
 import { stringify } from "./stringify";
@@ -80,3 +81,4 @@ class StackTrace
 }
 
 export { StackTrace };
+```

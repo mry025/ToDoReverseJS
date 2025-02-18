@@ -7,7 +7,7 @@ declare class StackTrace {
     lengthLimit: number;
     log: Log;
     textStorage: TextStorage;
-    constructor(open?: boolean, details?: boolean, lengthLimit?: number, toBlobLimit?: number);
+    constructor(open?: boolean, details?: boolean, lengthLimit?: number);
     getType(target: any): string;
     stringify(variable: any): string;
     proxy(proxyObject: object, name: string, debug?: undefined | Function): object;
