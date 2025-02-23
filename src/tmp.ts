@@ -38,7 +38,7 @@ class StackTrace
         return stringify(variable, this.lengthLimit);
     }
 
-    proxy(proxyObject: object, name: string, debug: undefined | Function = undefined)
+    proxy(proxyObject: object, name: string)
     {
         return proxy(proxyObject, name, (name, mode, target, property, value) => {
             if (!this.open) return;
@@ -46,25 +46,25 @@ class StackTrace
             if (mode != "set" && mode != "get") return;
             
             let content;
+            let select;
             let text;
 
-            if (this.details) content = this.stringify(target);
-            else content = this.stringify(value);
+            if (this.details) select = target;
+            else select = value;
+
+            content = this.stringify(select);
             text = `${name}|${mode}| 下标: ${property.toString()} 内容: ${content}\r\n`;
             this.textStorage.add(text);
             this.line += 1;
 
-            if (this.line % 100000 == 0) 
+            if (this.line % 10000 == 0) 
             {
                 this.log.debug(this.line + "");
                 this.textStorage.blobStored();
             }
 
-            // 断点
-            if (debug instanceof Function)
-            {
-                debug(this.line, name, mode, property.toString(), content);
-            }
+            // 判断 this.line, name, mode, property.toString(), select, content
+            // if (content.includes("|length 77, tpye array|")) debugger;
         })
     }
 

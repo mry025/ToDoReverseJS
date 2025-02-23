@@ -28,7 +28,7 @@ function stringifyString(str: string, lengthLimit: number) {
     if (str.length <= lengthLimit) return str;
     const lengthSplit = Math.floor(lengthLimit * 0.75);
     const start = str.substring(0, lengthSplit);
-    const end = str.substring(str.length - lengthSplit);
+    const end = str.substring(str.length - lengthLimit + lengthSplit);
     return `${start}···${end}|length ${str.length}|`;
 }
 
@@ -48,7 +48,7 @@ function shortedNumberArray(array: Array<number>, lengthLimit: number)
     {
         const lengthSplit = Math.floor(lengthLimit * 0.75);
         const start = array.slice(0, lengthSplit);
-        const end = array.slice(-lengthSplit);
+        const end = array.slice(lengthSplit - lengthLimit);
         const middle = '···';
 
         return [...start, middle, ...end].join(',');
@@ -56,23 +56,26 @@ function shortedNumberArray(array: Array<number>, lengthLimit: number)
 }
 
 // 将数组字符串化，并做一些打印优化
-function stringifyArray(array: Array<any>, lengthLimit: number, seen: WeakSet<object>)
+function stringifyArray(array: Array<any>, lengthLimit: number, isRemoveEmpty: boolean, seen: WeakSet<object>)
 {
     // 使用 filter 方法去除 null 和 undefined
-    array = array.filter(item => item !== null && item !== undefined);
-
+    if (isRemoveEmpty)
+    {
+        array = array.filter(item => item !== null && item !== undefined);
+    }
+    
     if (isNumberArray(array))
     {
         const res = shortedNumberArray(array, lengthLimit);
         if (array.length <= lengthLimit) return `[${res}]`;
-        else return `[${res}]|length ${array.length}, tpye array|`;
+        else return `[${res}]|length ${array.length}, type array|`;
     }
     else
     {
         let res = "[";
         for (let i of array)
         {
-            let temp = stringify(i, lengthLimit, seen);
+            let temp = stringify(i, lengthLimit, isRemoveEmpty, seen);
             res += temp;
             res += ","
         }
@@ -86,7 +89,7 @@ function stringifyArrayBuffer(arraybuffer: Array<any>, lengthLimit: number)
 {
     const res = shortedNumberArray(arraybuffer, lengthLimit);
     if (arraybuffer.length <= lengthLimit) return `[${res}]`;
-    else return `[${res}]|length ${arraybuffer.length}, tpye arraybuffer|`;
+    else return `[${res}]|length ${arraybuffer.length}, type arraybuffer|`;
 }   
 
 // 清除对象中的 undefined 项
@@ -100,12 +103,16 @@ function cleanObject(object: { [key: string]: any })
 }
 
 // 将对象字符串化，并做一些打印优化
-function stringifyObject(object: any, lengthLimit: number, seen: WeakSet<object>)
+function stringifyObject(object: any, lengthLimit: number, isRemoveEmpty: boolean, seen: WeakSet<object>)
 {
     if (seen.has(object)) return "|seen|";
     seen.add(object);
 
-    cleanObject(object);
+    if (isRemoveEmpty)
+    {
+        cleanObject(object);
+    }
+    
     let keys = Object.keys(object);
     if (keys.length == 0) return "{}";
 
@@ -114,7 +121,7 @@ function stringifyObject(object: any, lengthLimit: number, seen: WeakSet<object>
     {
         res += key;
         res += ":";
-        res += stringify(object[key], lengthLimit, seen);
+        res += stringify(object[key], lengthLimit, isRemoveEmpty, seen);
         res += ",";
     }
     res = res.slice(0, -1) + '}';
@@ -138,7 +145,7 @@ function isBrowserObject(variable: any)
 }
 
 // 字符串化
-function stringify(variable: any, lengthLimit=50, seen = new WeakSet())
+function stringify(variable: any, lengthLimit=50, isRemoveEmpty=true, seen = new WeakSet())
 {
     let check = isBrowserObject(variable);
     if (check) return check;
@@ -148,11 +155,11 @@ function stringify(variable: any, lengthLimit=50, seen = new WeakSet())
         case "string":
             return stringifyString(variable, lengthLimit);
         case "array":
-            return stringifyArray(variable, lengthLimit, seen);
+            return stringifyArray(variable, lengthLimit, isRemoveEmpty, seen);
         case "arraybuffer":
             return stringifyArrayBuffer(variable, lengthLimit);
         case "object":
-            return stringifyObject(variable, lengthLimit, seen);
+            return stringifyObject(variable, lengthLimit, isRemoveEmpty, seen);
         case "symbol":
             return variable.toString();
         case "function":

@@ -10,7 +10,7 @@ declare class StackTrace {
     constructor(open?: boolean, details?: boolean, lengthLimit?: number);
     getType(target: any): string;
     stringify(variable: any): string;
-    proxy(proxyObject: object, name: string, debug?: undefined | Function): object;
+    proxy(proxyObject: object, name: string): object;
     download(fileName?: string): void;
     clear(): void;
 }

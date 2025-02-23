@@ -26,29 +26,29 @@ class StackTrace {
     stringify(variable) {
         return (0, stringify_1.stringify)(variable, this.lengthLimit);
     }
-    proxy(proxyObject, name, debug = undefined) {
+    proxy(proxyObject, name) {
         return (0, proxy_1.proxy)(proxyObject, name, (name, mode, target, property, value) => {
             if (!this.open)
                 return;
             if (mode != "set" && mode != "get")
                 return;
             let content;
+            let select;
             let text;
             if (this.details)
-                content = this.stringify(target);
+                select = target;
             else
-                content = this.stringify(value);
+                select = value;
+            content = this.stringify(select);
             text = `${name}|${mode}| 下标: ${property.toString()} 内容: ${content}\r\n`;
             this.textStorage.add(text);
             this.line += 1;
-            if (this.line % 100000 == 0) {
+            if (this.line % 10000 == 0) {
                 this.log.debug(this.line + "");
                 this.textStorage.blobStored();
             }
-            // 断点
-            if (debug instanceof Function) {
-                debug(this.line, name, mode, property.toString(), content);
-            }
+            // 判断 this.line, name, mode, property.toString(), select, content
+            // if (content.includes("|length 77, tpye array|")) debugger;
         });
     }
     download(fileName = '日志.txt') {

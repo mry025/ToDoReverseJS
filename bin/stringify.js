@@ -27,7 +27,7 @@ function stringifyString(str, lengthLimit) {
         return str;
     const lengthSplit = Math.floor(lengthLimit * 0.75);
     const start = str.substring(0, lengthSplit);
-    const end = str.substring(str.length - lengthSplit);
+    const end = str.substring(str.length - lengthLimit + lengthSplit);
     return `${start}···${end}|length ${str.length}|`;
 }
 // 判断一个数组是否全是数字
@@ -42,26 +42,28 @@ function shortedNumberArray(array, lengthLimit) {
     else {
         const lengthSplit = Math.floor(lengthLimit * 0.75);
         const start = array.slice(0, lengthSplit);
-        const end = array.slice(-lengthSplit);
+        const end = array.slice(lengthSplit - lengthLimit);
         const middle = '···';
         return [...start, middle, ...end].join(',');
     }
 }
 // 将数组字符串化，并做一些打印优化
-function stringifyArray(array, lengthLimit, seen) {
+function stringifyArray(array, lengthLimit, isRemoveEmpty, seen) {
     // 使用 filter 方法去除 null 和 undefined
-    array = array.filter(item => item !== null && item !== undefined);
+    if (isRemoveEmpty) {
+        array = array.filter(item => item !== null && item !== undefined);
+    }
     if (isNumberArray(array)) {
         const res = shortedNumberArray(array, lengthLimit);
         if (array.length <= lengthLimit)
             return `[${res}]`;
         else
-            return `[${res}]|length ${array.length}, tpye array|`;
+            return `[${res}]|length ${array.length}, type array|`;
     }
     else {
         let res = "[";
         for (let i of array) {
-            let temp = stringify(i, lengthLimit, seen);
+            let temp = stringify(i, lengthLimit, isRemoveEmpty, seen);
             res += temp;
             res += ",";
         }
@@ -75,7 +77,7 @@ function stringifyArrayBuffer(arraybuffer, lengthLimit) {
     if (arraybuffer.length <= lengthLimit)
         return `[${res}]`;
     else
-        return `[${res}]|length ${arraybuffer.length}, tpye arraybuffer|`;
+        return `[${res}]|length ${arraybuffer.length}, type arraybuffer|`;
 }
 // 清除对象中的 undefined 项
 function cleanObject(object) {
@@ -86,11 +88,13 @@ function cleanObject(object) {
     }
 }
 // 将对象字符串化，并做一些打印优化
-function stringifyObject(object, lengthLimit, seen) {
+function stringifyObject(object, lengthLimit, isRemoveEmpty, seen) {
     if (seen.has(object))
         return "|seen|";
     seen.add(object);
-    cleanObject(object);
+    if (isRemoveEmpty) {
+        cleanObject(object);
+    }
     let keys = Object.keys(object);
     if (keys.length == 0)
         return "{}";
@@ -98,7 +102,7 @@ function stringifyObject(object, lengthLimit, seen) {
     for (let key of keys) {
         res += key;
         res += ":";
-        res += stringify(object[key], lengthLimit, seen);
+        res += stringify(object[key], lengthLimit, isRemoveEmpty, seen);
         res += ",";
     }
     res = res.slice(0, -1) + '}';
@@ -115,7 +119,7 @@ function isBrowserObject(variable) {
     return ret;
 }
 // 字符串化
-function stringify(variable, lengthLimit = 50, seen = new WeakSet()) {
+function stringify(variable, lengthLimit = 50, isRemoveEmpty = true, seen = new WeakSet()) {
     let check = isBrowserObject(variable);
     if (check)
         return check;
@@ -124,11 +128,11 @@ function stringify(variable, lengthLimit = 50, seen = new WeakSet()) {
         case "string":
             return stringifyString(variable, lengthLimit);
         case "array":
-            return stringifyArray(variable, lengthLimit, seen);
+            return stringifyArray(variable, lengthLimit, isRemoveEmpty, seen);
         case "arraybuffer":
             return stringifyArrayBuffer(variable, lengthLimit);
         case "object":
-            return stringifyObject(variable, lengthLimit, seen);
+            return stringifyObject(variable, lengthLimit, isRemoveEmpty, seen);
         case "symbol":
             return variable.toString();
         case "function":
