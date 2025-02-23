@@ -55,13 +55,18 @@ function shortedNumberArray(array: Array<number>, lengthLimit: number)
     }
 }
 
+function cleanArray(array: Array<any>)
+{
+    return array = array.filter(item => item != null && item != undefined && item != "");
+}
+
 // 将数组字符串化，并做一些打印优化
 function stringifyArray(array: Array<any>, lengthLimit: number, isRemoveEmpty: boolean, seen: WeakSet<object>)
 {
     // 使用 filter 方法去除 null 和 undefined
     if (isRemoveEmpty)
     {
-        array = array.filter(item => item !== null && item !== undefined);
+        array = cleanArray(array);
     }
     
     if (isNumberArray(array))
@@ -92,13 +97,12 @@ function stringifyArrayBuffer(arraybuffer: Array<any>, lengthLimit: number)
     else return `[${res}]|length ${arraybuffer.length}, type arraybuffer|`;
 }   
 
-// 清除对象中的 undefined 项
 function cleanObject(object: { [key: string]: any })
 {
     let keys = Object.keys(object);
     for (const key of keys)
     {
-        if (object[key] == undefined) delete object[key];
+        if (object[key] == undefined || object[key] == null || object[key] == "") delete object[key];
     }
 }
 
