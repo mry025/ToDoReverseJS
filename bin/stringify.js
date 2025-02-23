@@ -24,11 +24,11 @@ function escapeSpecialCharacters(str) {
 function stringifyString(str, lengthLimit) {
     str = escapeSpecialCharacters(str);
     if (str.length <= lengthLimit)
-        return str;
+        return `"${str}"`;
     const lengthSplit = Math.floor(lengthLimit * 0.75);
     const start = str.substring(0, lengthSplit);
     const end = str.substring(str.length - lengthLimit + lengthSplit);
-    return `${start}···${end}|length ${str.length}|`;
+    return `"${start}···${end}"|length ${str.length}|`;
 }
 // 判断一个数组是否全是数字
 function isNumberArray(array) {
@@ -48,11 +48,11 @@ function shortedNumberArray(array, lengthLimit) {
     }
 }
 function cleanArray(array) {
-    return array = array.filter(item => item != null && item != undefined && item != "");
+    return array.filter(item => item != null && item != undefined);
 }
 // 将数组字符串化，并做一些打印优化
 function stringifyArray(array, lengthLimit, isRemoveEmpty, seen) {
-    // 使用 filter 方法去除 null 和 undefined
+    // 使用 filter 方法去除空值
     if (isRemoveEmpty) {
         array = cleanArray(array);
     }
@@ -84,10 +84,13 @@ function stringifyArrayBuffer(arraybuffer, lengthLimit) {
 }
 function cleanObject(object) {
     let keys = Object.keys(object);
+    let newObject = {};
     for (const key of keys) {
-        if (object[key] == undefined || object[key] == null || object[key] == "")
-            delete object[key];
+        if (object[key] == undefined || object[key] == null)
+            continue;
+        newObject[key] = object[key];
     }
+    return newObject;
 }
 // 将对象字符串化，并做一些打印优化
 function stringifyObject(object, lengthLimit, isRemoveEmpty, seen) {
@@ -95,7 +98,7 @@ function stringifyObject(object, lengthLimit, isRemoveEmpty, seen) {
         return "|seen|";
     seen.add(object);
     if (isRemoveEmpty) {
-        cleanObject(object);
+        object = cleanObject(object);
     }
     let keys = Object.keys(object);
     if (keys.length == 0)
@@ -104,7 +107,7 @@ function stringifyObject(object, lengthLimit, isRemoveEmpty, seen) {
     for (let key of keys) {
         res += key;
         res += ":";
-        res += stringify(object[key], lengthLimit, isRemoveEmpty, seen);
+        res += `"${stringify(object[key], lengthLimit, isRemoveEmpty, seen)}"`;
         res += ",";
     }
     res = res.slice(0, -1) + '}';

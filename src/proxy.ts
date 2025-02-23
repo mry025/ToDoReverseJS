@@ -202,7 +202,7 @@ function _proxyHandleTemplate(name: string, mode: string, target: object, proper
         {
             callBackFunc(name, mode, target, property!, value);
         } catch (error) {
-            throw "传入的回调函数报错\n" + error;
+            throw error;
         }
     }
 
