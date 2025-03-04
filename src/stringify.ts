@@ -130,7 +130,7 @@ function stringifyObject(object: any, lengthLimit: number, isRemoveEmpty: boolea
     {
         res += key;
         res += ":";
-        res += `"${stringify(object[key], lengthLimit, isRemoveEmpty, seen)}"`;
+        res += `${stringify(object[key], lengthLimit, isRemoveEmpty, seen)}`;
         res += ",";
     }
     res = res.slice(0, -1) + '}';
