@@ -64,13 +64,16 @@ class StackTrace
             }
 
             // 判断 this.line, name, mode, property.toString(), select, content
-            // if (content.includes("|length 77, tpye array|")) debugger;
+            if (mode == "get" && property + "" == "1" && content == "function random") debugger;
         })
     }
 
     download(fileName = '日志.txt')
     {
-        this.textStorage.download(fileName)
+        this.textStorage.download(fileName);
+        this.clear();
+        this.line = 0;
+        this.open = false;
     }
 
     clear()
