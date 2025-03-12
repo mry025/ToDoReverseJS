@@ -12,7 +12,6 @@ const utiles_1 = require("./utiles");
 // 处理字符串中特殊字符
 function escapeSpecialCharacters(str) {
     return str
-        .replace(/\\/g, "\\\\") // 转义反斜杠
         .replace(/\n/g, "\\n") // 转义换行符
         .replace(/\r/g, "\\r") // 转义回车符
         .replace(/\t/g, "\\t") // 转义制表符

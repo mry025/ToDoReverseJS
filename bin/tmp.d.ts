@@ -7,6 +7,7 @@ declare class StackTrace {
     lengthLimit: number;
     log: Log;
     textStorage: TextStorage;
+    proxy_map: Map<object, string>;
     constructor(open?: boolean, details?: boolean, lengthLimit?: number);
     getType(target: any): string;
     stringify(variable: any): string;
