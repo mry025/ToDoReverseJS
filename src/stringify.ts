@@ -12,7 +12,6 @@ import { getType } from "./utiles";
 function escapeSpecialCharacters(str: string): string
 {
     return str
-        .replace(/\\/g, "\\\\")       // 转义反斜杠
         .replace(/\n/g, "\\n")        // 转义换行符
         .replace(/\r/g, "\\r")        // 转义回车符
         .replace(/\t/g, "\\t")        // 转义制表符
