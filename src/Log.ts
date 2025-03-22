@@ -9,12 +9,16 @@ class Log
 { 
     public open: boolean;
     public isRecord: boolean;
+    public console_log: Function;
+    public console_error: Function;
     private history: string;
 
     constructor(open=true, isRecord=true)
     {
         this.open = open;
         this.isRecord = isRecord;
+        this.console_log = console.debug;
+        this.console_error = console.error;
 
         this.history = "";
     }
@@ -36,10 +40,10 @@ class Log
 
         switch (mode) {
             case PRINT_MODE.ERROR:
-                console.error(content)
+                this.console_error(content)
                 break;
             default:
-                console.log(content);
+                this.console_log(content);
                 break;
         }
     }

@@ -1,6 +1,8 @@
 declare class Log {
     open: boolean;
     isRecord: boolean;
+    console_log: Function;
+    console_error: Function;
     private history;
     constructor(open?: boolean, isRecord?: boolean);
     private print;

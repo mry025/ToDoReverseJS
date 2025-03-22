@@ -27,6 +27,14 @@ class StackTrace {
     stringify(variable) {
         return (0, stringify_1.stringify)(variable, this.lengthLimit);
     }
+    addContent(text, maxLine = 10000) {
+        this.textStorage.add(text);
+        this.line += 1;
+        if (this.line % maxLine == 0) {
+            this.log.debug(this.line + "");
+            this.textStorage.blobStored();
+        }
+    }
     proxy(proxyObject, name) {
         let is_has = this.proxy_map.has(proxyObject);
         if (is_has)
@@ -46,15 +54,9 @@ class StackTrace {
                     select = value;
                 content = this.stringify(select);
                 text = `${name}|${mode}| 下标: ${property.toString()} 内容: ${content}\r\n`;
-                this.textStorage.add(text);
-                this.line += 1;
-                if (this.line % 10000 == 0) {
-                    this.log.debug(this.line + "");
-                    this.textStorage.blobStored();
-                }
+                this.addContent(text, 10000);
                 // 判断 this.line, name, mode, property.toString(), select, content
-                if (content.includes('"{"nWID":{"navigator":{"userAgent"'))
-                    debugger;
+                // if (value == 26 && property.toString() == "5") debugger;
             });
             this.proxy_map.set(tmp, name);
             return tmp;

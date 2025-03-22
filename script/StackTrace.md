@@ -23,6 +23,8 @@ class StackTrace
     public log: Log;                // 调试打印
     public textStorage: TextStorage // 日志的存储
 
+    public proxy_map: Map<object, string>;  // 代理过的对象
+
     constructor(open=false, details=false, lengthLimit=20)
     {
         this.open = open;
@@ -32,6 +34,8 @@ class StackTrace
 
         this.log = new Log();
         this.textStorage = new TextStorage();
+
+        this.proxy_map = new Map();
     }
 
     getType(target: any): string
@@ -48,47 +52,59 @@ class StackTrace
         return stringify(variable, this.lengthLimit);
     }
 
+    addContent(text: string, maxLine=10000)
+    {
+        this.textStorage.add(text);
+        this.line += 1;
+
+        if (this.line % maxLine == 0) 
+        {
+            this.log.debug(this.line + "");
+            this.textStorage.blobStored();
+        }
+    }
+
     proxy(proxyObject: object, name: string)
     {
-        return proxy(proxyObject, name, (name, mode, target, property, value) => {
-            if (!this.open) return;
-
-            if (mode != "set" && mode != "get") return;
-            
-            let content;
-            let select;
-            let text;
-
-            if (this.details) select = target;
-            else select = value;
-
-            content = this.stringify(select);
-            text = `${name}|${mode}| 下标: ${property.toString()} 内容: ${content}\r\n`;
-            this.textStorage.add(text);
-            this.line += 1;
-
-            if (this.line % 10000 == 0) 
-            {
-                this.log.debug(this.line + "");
-                this.textStorage.blobStored();
-            }
-
-            // 判断 this.line, name, mode, property.toString(), select, content
-            // if (mode == "get" && property + "" == "1" && content == "function random") debugger;
-        })
+        let is_has = this.proxy_map.has(proxyObject);
+        if (is_has) return proxyObject;
+        else
+        {
+            let tmp = proxy(proxyObject, name, (name, mode, target, property, value) => {
+                if (!this.open) return;
+    
+                if (mode != "set" && mode != "get") return;
+                
+                let content;
+                let select;
+                let text;
+    
+                if (this.details) select = target;
+                else select = value;
+    
+                content = this.stringify(select);
+                text = `${name}|${mode}| 下标: ${property.toString()} 内容: ${content}\r\n`;
+                this.addContent(text, 10000);
+    
+                // 判断 this.line, name, mode, property.toString(), select, content
+                // if (value == 26 && property.toString() == "5") debugger;
+            });
+            this.proxy_map.set(tmp, name);
+            return tmp;
+        }
     }
 
     download(fileName = '日志.txt')
     {
         this.textStorage.download(fileName);
         this.clear();
-        this.line = 0;
-        this.open = false;
     }
 
     clear()
     {
-        this.textStorage.clear()
+        this.textStorage.clear();
+        this.line = 0;
+        this.open = false;
     }
 }
 

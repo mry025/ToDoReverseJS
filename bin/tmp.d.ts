@@ -11,6 +11,7 @@ declare class StackTrace {
     constructor(open?: boolean, details?: boolean, lengthLimit?: number);
     getType(target: any): string;
     stringify(variable: any): string;
+    addContent(text: string, maxLine?: number): void;
     proxy(proxyObject: object, name: string): object;
     download(fileName?: string): void;
     clear(): void;
