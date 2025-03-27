@@ -25,6 +25,8 @@ class StackTrace
 
     public proxy_map: Map<object, string>;  // 代理过的对象
 
+    
+
     constructor(open=false, details=false, lengthLimit=20)
     {
         this.open = open;

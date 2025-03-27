@@ -15,7 +15,7 @@ class StackTrace
 
     public proxy_map: Map<object, string>;  // 代理过的对象
 
-    constructor(open=false, details=false, lengthLimit=20)
+    constructor(open=false, details=false, lengthLimit=50)
     {
         this.open = open;
         this.details = details;
@@ -77,7 +77,8 @@ class StackTrace
                 this.addContent(text, 10000);
     
                 // 判断 this.line, name, mode, property.toString(), select, content
-                // if (value == 26 && property.toString() == "5") debugger;
+                if (content.includes("135.29603576660156")) debugger;
+
             });
             this.proxy_map.set(tmp, name);
             return tmp;
@@ -99,3 +100,4 @@ class StackTrace
 }
 
 export { StackTrace };
+

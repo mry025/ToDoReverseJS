@@ -6,7 +6,7 @@ const TextStorage_1 = require("./TextStorage");
 const stringify_1 = require("./stringify");
 const proxy_1 = require("./proxy");
 class StackTrace {
-    constructor(open = false, details = false, lengthLimit = 20) {
+    constructor(open = false, details = false, lengthLimit = 50) {
         this.open = open;
         this.details = details;
         this.line = 0;
@@ -56,7 +56,8 @@ class StackTrace {
                 text = `${name}|${mode}| 下标: ${property.toString()} 内容: ${content}\r\n`;
                 this.addContent(text, 10000);
                 // 判断 this.line, name, mode, property.toString(), select, content
-                // if (value == 26 && property.toString() == "5") debugger;
+                if (content.includes("135.29603576660156"))
+                    debugger;
             });
             this.proxy_map.set(tmp, name);
             return tmp;

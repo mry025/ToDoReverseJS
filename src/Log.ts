@@ -17,7 +17,7 @@ class Log
     {
         this.open = open;
         this.isRecord = isRecord;
-        this.console_log = console.debug;
+        this.console_log = console.log;
         this.console_error = console.error;
 
         this.history = "";

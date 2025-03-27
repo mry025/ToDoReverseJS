@@ -1,8 +1,22 @@
 type CallBack = (name: string, mode: string, target: object, property: string, value: any) => void;
 
+
+/* 代理对象嵌套处理
+let s = new nothing.StackTrace(true)
+let a = [1, 2, [44, 4, 88, 665]]
+a = s.proxy(a, "a")
+let a_ = [22, a]
+a_ = s.proxy(a_, "a_")
+a_.filter(item => item != null && item != undefined)
+s.download()
+*/
+let in_recursion = false;
+
 // 创建一个代理对象，用于拦截并处理对象的属性访问。
 function proxy(proxyObject: object, name: string, callBackFunc: CallBack)
 {
+  
+
     // 句柄
     let handler = {
         getPrototypeOf(target: object) 
@@ -125,16 +139,7 @@ function proxy(proxyObject: object, name: string, callBackFunc: CallBack)
     return new Proxy(proxyObject, handler);
 }
 
-/**
- * 代理中的模板
- * @param {string} name 
- * @param {string} mode 
- * @param {object} target 
- * @param {string} property 
- * @param {Array} args 
- * @param {Function | *} callBackFunc 
- * @returns 
- */
+// 代理中的模板
 function _proxyHandleTemplate(name: string, mode: string, target: object, property: string | undefined, args: Array<any>, callBackFunc: CallBack)
 {
     let result;
@@ -195,14 +200,21 @@ function _proxyHandleTemplate(name: string, mode: string, target: object, proper
             break;
     }
 
-    // 回调函数，扩展代理功能
-    if (callBackFunc instanceof Function)
+    // 判断是否递归调用
+    if (!in_recursion)
     {
-        try 
+        in_recursion = true;
+
+        // 回调函数，扩展代理功能
+        if (callBackFunc instanceof Function)
         {
-            callBackFunc(name, mode, target, property!, value);
-        } catch (error) {
-            throw error;
+            try 
+            {
+                callBackFunc(name, mode, target, property!, value);
+                in_recursion = false;
+            } catch (error) {
+                throw error;
+            }
         }
     }
 
@@ -212,3 +224,4 @@ function _proxyHandleTemplate(name: string, mode: string, target: object, proper
 export {
     proxy
 }
+
