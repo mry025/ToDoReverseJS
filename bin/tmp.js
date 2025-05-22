@@ -24,8 +24,12 @@ class StackTrace {
             return 'null';
         return typeof target;
     }
-    stringify(variable) {
-        return (0, stringify_1.stringify)(variable, this.lengthLimit);
+    stringify(...variables) {
+        let result = "";
+        for (let variable of variables) {
+            result += (0, stringify_1.stringify)(variable, this.lengthLimit);
+        }
+        return result;
     }
     addContent(text, maxLine = 10000) {
         this.textStorage.add(text + '\r\n');

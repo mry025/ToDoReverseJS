@@ -47,9 +47,16 @@ class StackTrace
         return typeof target;
     }
 
-    stringify(variable: any): string
+    stringify(...variables: any[]): string
     {
-        return stringify(variable, this.lengthLimit);
+        let result = [];
+
+        for (let variable of variables)
+        {
+            result.push(stringify(variable, this.lengthLimit));
+        }
+
+        return result.join(" ");
     }
 
     addContent(text: string, maxLine=10000)
