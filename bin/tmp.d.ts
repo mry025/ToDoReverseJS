@@ -12,7 +12,7 @@ declare class StackTrace {
     getType(target: any): string;
     stringify(variable: any): string;
     addContent(text: string, maxLine?: number): void;
-    proxy(proxyObject: object, name: string): object;
+    proxy(proxyObject: object, name: string, condition?: Function): object;
     download(fileName?: string): void;
     clear(): void;
 }

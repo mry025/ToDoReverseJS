@@ -145,6 +145,7 @@ function isBrowserObject(variable: any)
     {
         if (typeof variable != "symbol" && getType(variable) != 'arraybuffer') 
         {
+            // 处理set
             ret = variable[Symbol.toStringTag].toLowerCase();
         }
     }
@@ -180,3 +181,5 @@ function stringify(variable: any, lengthLimit=50, isRemoveEmpty=true, seen = new
 export {
     stringify
 }
+
+

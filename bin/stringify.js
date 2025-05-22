@@ -117,6 +117,7 @@ function isBrowserObject(variable) {
     let ret;
     if (variable && variable[Symbol.toStringTag]) {
         if (typeof variable != "symbol" && (0, utiles_1.getType)(variable) != 'arraybuffer') {
+            // 处理set
             ret = variable[Symbol.toStringTag].toLowerCase();
         }
     }

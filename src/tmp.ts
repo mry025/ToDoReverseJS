@@ -44,7 +44,7 @@ class StackTrace
 
     addContent(text: string, maxLine=10000)
     {
-        this.textStorage.add(text);
+        this.textStorage.add(text + '\r\n');
         this.line += 1;
 
         if (this.line % maxLine == 0) 
@@ -54,7 +54,7 @@ class StackTrace
         }
     }
 
-    proxy(proxyObject: object, name: string)
+    proxy(proxyObject: object, name: string, condition: Function = () => { return false })
     {
         let is_has = this.proxy_map.has(proxyObject);
         if (is_has) return proxyObject;
@@ -73,12 +73,10 @@ class StackTrace
                 else select = value;
     
                 content = this.stringify(select);
-                text = `${name}|${mode}| 下标: ${property.toString()} 内容: ${content}\r\n`;
+                text = `${name}|${mode}| 下标: ${property.toString()} 内容: ${content}`;
                 this.addContent(text, 10000);
-    
-                // 判断 this.line, name, mode, property.toString(), select, content
-                if (content.includes("135.29603576660156")) debugger;
-
+                
+                if (condition(this.line, name, mode, property.toString(), select, content)) debugger;
             });
             this.proxy_map.set(tmp, name);
             return tmp;
