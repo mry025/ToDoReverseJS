@@ -28,8 +28,9 @@ class StackTrace {
         let result = "";
         for (let variable of variables) {
             result += (0, stringify_1.stringify)(variable, this.lengthLimit);
+            result += " ";
         }
-        return result;
+        return result.slice(0, -1);
     }
     addContent(text, maxLine = 10000) {
         this.textStorage.add(text + '\r\n');

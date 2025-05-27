@@ -39,14 +39,15 @@ class StackTrace
 
     stringify(...variables: any[]): string
     {
-        let result = [];
+        let result = "";
 
         for (let variable of variables)
         {
-            result.push(stringify(variable, this.lengthLimit));
+            result += stringify(variable, this.lengthLimit)
+            result += " ";
         }
 
-        return result.join(" ");
+        return result.slice(0, -1); 
     }
 
     addContent(text: string, maxLine=10000)
@@ -105,5 +106,4 @@ class StackTrace
 }
 
 export { StackTrace };
-
 
